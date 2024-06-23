@@ -1,6 +1,6 @@
 import logging
-from typing import Any
 import os
+from typing import Any
 
 
 def setup_logger(name: str, file_logs: str) -> Any:

@@ -1,18 +1,20 @@
 import functools
 import json
 from datetime import datetime, timedelta
-from src.logger import setup_logger
+from typing import Any, Callable
 
 import pandas as pd
+
+from src.logger import setup_logger
 
 logger = setup_logger("reports", "logs/reports.log")
 
 
-def report_to_file_default(func):
+def report_to_file_default(func: Callable) -> Callable:
     """Записывает в файл результат, который возвращает функция, формирующая отчет."""
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         result = func(*args, **kwargs)
         with open("function_operation_report.txt", "w") as file:
             file.write(str(result))
@@ -22,12 +24,12 @@ def report_to_file_default(func):
     return wrapper
 
 
-def report_to_file(filename="function_operation_report.txt"):
+def report_to_file(filename: str = "function_operation_report.txt") -> Callable:
     """Записывает в переданный файл результат, который возвращает функция, формирующая отчет."""
 
-    def decorator(func):
+    def decorator(func: Callable[[tuple[Any, ...], dict[str, Any]], Any]) -> Callable:
         @functools.wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             result = func(*args, **kwargs)
             with open(filename, "w") as file:
                 file.write(str(result))
@@ -41,7 +43,7 @@ def report_to_file(filename="function_operation_report.txt"):
 
 # дата гггг.мм.дд
 @report_to_file_default
-def spending_by_category(transactions: pd.DataFrame, category: str, date=None) -> str:
+def spending_by_category(transactions: pd.DataFrame, category: str, date=None) -> Any:
     """Функция возвращает траты по заданной категории за последние три месяца
     (от переданной даты, если дата не передана берет текущую)"""
     try:
